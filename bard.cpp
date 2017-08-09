@@ -57,9 +57,9 @@ void setupWindows() {
 
 	ncu.addWin("casualselected", 3, COLS / 2, 3, 0, BOX);
 	ncu.addWin("casualinput", 3, COLS / 2, 6, 0, INPUT_BOX);
-	ncu.addWin("casualoverviewtop", LINES - 6 - 7, COLS / 2, 3, COLS - COLS / 2, BOX);
-	ncu.addWin("casualoverviewbottom", 7, COLS / 2, LINES - 10, COLS - COLS / 2, BOX);
-	ncu.addWin("casualmessage", 3, COLS / 2, 9, 0, NO_BOX);
+	ncu.addWin("casualoverviewtop", /*LINES - 6 - 7*/11, COLS / 2, 3, COLS - COLS / 2, BOX);
+	ncu.addWin("casualoverviewbottom", 7, COLS / 2, /*LINES - 10*/14, COLS - COLS / 2, BOX);
+	ncu.addWin("casualmessage", LINES - 12, COLS / 2, 9, 0, NO_BOX);
 
 	ncu.addWin("cancel", 3, COLS, LINES / 2, 0, NO_BOX);
 
@@ -76,7 +76,7 @@ void setupWindows() {
 	mvwprintw(ncu.getWin("esc"), 1, 2, " Modes ");
 	mvwprintw(ncu.getWin("esc"), 3, 3, "c: Casual");
 	mvwprintw(ncu.getWin("esc"), 4, 3, "C: Contest");
-	mvwprintw(ncu.getWin("esc"), 5, 3, "r: Repeater");
+	mvwprintw(ncu.getWin("esc"), 5, 3, "n: Net");
 	mvwprintw(ncu.getWin("esc"), 9, 3, "u: Set User Info");
 	mvwprintw(ncu.getWin("esc"), 10, 3, "s: Search");
 	mvwprintw(ncu.getWin("esc"), 11, 3, "q: Quit");
@@ -156,7 +156,7 @@ void mode(Mode m) {
 	switch(m) {
 		case SEARCH:
 			ncu.printWin("top", 1, 2, "Search Callsign Database");
-			ncu.printWin("bottom", 1, 2, "S: New Search  n: Create Log  e: Edit Contact");
+			ncu.printWin("bottom", 1, 2, "s: New Search  n: Create Log  e: Edit Contact");
 			ncu.showLayout("search");
 			break;
 		case ESC:
@@ -209,9 +209,11 @@ void search() {
 }
 
 void casual(Person *passp) {
+	int i, choice;
 	char ch;
 	bool timeb = false;
 	string s;
+	stringstream ss;
 	Person *p, *ptmp;
 	Contact *c;
 
@@ -230,13 +232,12 @@ void casual(Person *passp) {
 	while (1) {
 		// update screen
 		ncu.clearWin("casualselected");
-		ncu.clearWin("casualinput");
 		ncu.clearWin("casualoverviewtop");
 		cprintPerson(p, c);
 
 		switch (getch()) {
 			case 'c':
-				ncu.printWin("casualselected", 1, 2, "Call Sign");
+				ncu.printWin("casualselected", 1, (COLS/2-4)/2, "Callsign");
 				s = ncu.getInput("casualinput");
 				if (s != "") {
 					b.cap(s);
@@ -250,9 +251,9 @@ void casual(Person *passp) {
 				}
 				break;
 			case 'n':
-				ncu.printWin("casualselected", 1, 2, "Name");
+				ncu.printWin("casualselected", 1, (COLS/2-4)/2, "Name");
 				s = ncu.getInput("casualinput");
-				p->name = s;
+				if (s != "") p->name = s;
 				break;
 			case 't':
 				if (timeb) {
@@ -266,7 +267,47 @@ void casual(Person *passp) {
 				}
 				break;
 			case 'l':
+				ncu.printWin("casualselected", 1, ((COLS/2) - 8) / 2, "Location");
+				if (p->location.size() == 0) {
+					s = ncu.getInput("casualinput");
+					if (s != "") {
+						p->location.push_back(s);
+						c->location = 0;
+					}
+				}
+				else {
+					ss.str(""); // for cleanliness sake
+					ncu.printWin("casualmessage", 1, 2, "Choose a location (or esc to cancel):");
+					wmove(ncu.getWin("casualmessage"), 2, 1);
+					whline(ncu.getWin("casualmessage"), 0, COLS/2 - 2);
 
+					for (i = 0; i < p->location.size(); i++) {
+						ss << i + 1 << ": " << p->location[i];
+						ncu.printWin("casualmessage", i + 3, 2, ss.str());
+						ss.str("");
+					}
+					ss << i+1 << ": + New Location";
+					ncu.printWin("casualmessage", p->location.size() + 3, 2, ss.str());
+
+					while (1) {
+						ch = getch();
+						if (ch == 27) break; // esc the madness
+						choice = ch - '0';
+						cout << choice << endl;
+						if (choice > 0 && choice < p->location.size() + 1) {
+							c->location = choice - 1;
+							break;
+						}
+						else if (choice == p->location.size() + 1) {
+							s = ncu.getInput("casualinput");
+							p->location.push_back(s);
+							c->location = p->location.size() - 1;
+							break;
+						}
+					}	
+				}
+				ncu.clearWin("casualmessage");
+				break;
 			case 27:
 				ncu.showLayout("cancel");
 				if (getch() == 'y') {
@@ -289,7 +330,7 @@ void cprintPerson(Person *p, Contact *c) {
 	ncu.printWin(cw, cl++, 1, " Contact ");
 	cl++;
 
-	ncu.printWin(cw, cl, 2, "Call Sign:");
+	ncu.printWin(cw, cl, 2, "Callsign:");
 	if (p->call.size() != 0) ncu.printWin(cw, cl, 19, p->call[0]);
 	cl++;
 	ncu.printWin(cw, cl++, 2, "Name:            " + p->name);
@@ -324,12 +365,12 @@ void cprintPerson(Person *p, Contact *c) {
 	ncu.printWin(you, cl++, 1, " You ");
 	cl++;
 
-	ncu.printWin(you, cl++, 2, "Location: " + b.userInfo->location[b.userInfo->cur[0]]);
-	ncu.printWin(you, cl++, 2, "Radio:    " + b.userInfo->radio[b.userInfo->cur[1]]);
+	ncu.printWin(you, cl++, 2, "Location:         " + b.userInfo->location[b.userInfo->cur[0]]);
+	ncu.printWin(you, cl++, 2, "Radio:            " + b.userInfo->radio[b.userInfo->cur[1]]);
 	ss.str("");
-	ss << "Power:    " << b.userInfo->cur[2];
+	ss <<                      "Power:            " << b.userInfo->cur[2];
 	ncu.printWin(you, cl++, 2, ss.str());
-	ncu.printWin(you, cl++, 2, "Mode:     " + b.getRadioMode(b.userInfo->cur[3]));
+	ncu.printWin(you, cl++, 2, "Mode:             " + b.getRadioMode(b.userInfo->cur[3]));
 }
 
 void printInfo(Person *p) {

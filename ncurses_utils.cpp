@@ -161,9 +161,11 @@ string NcursesUtils::getInput(string name) {
 		ch = wgetch(getWin(name));
 		switch (ch) {
 			case 10: // enter
+				clearWin(name);
 				curs_set(0);
 				return s;
 			case 27: // esc
+				clearWin(name);
 				curs_set(0);
 				return "";
 			case 127: // backspace
