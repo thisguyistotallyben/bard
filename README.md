@@ -9,4 +9,4 @@ As of Tuesday, August 8, 2017, BARD uses only an ncurses-driven command line int
 
 Install:
 
-You need a c++ compiler, make, and ncurses.  Type 'make' to run the makefile.
+You need a c++ compiler, make, ncurses, and probably Linux.  Type 'make' to run the makefile.
