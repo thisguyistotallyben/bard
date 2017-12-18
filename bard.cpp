@@ -6,20 +6,109 @@
 #include <iostream>
 #include <sstream>
 #include <cstring>
-#include "bard_utils.h"
+#include <vector>
+//#include "bard_utils.h"
 #include "ncu.h"
 
-int main() {
+// globals
+enum Mode {ESC, CASUAL, SEARCH};
+
+vector<Mode> modeStack;
+bool CMD;
+NCU ncu;
+Mode currMode, prevMode;
+
+// prototypes
+void cmdSetup();
+void cmdLoop();
+void push(Mode m);
+void pop();
+
+// mode prototypes
+void escMenu();
+
+
+int main(int argc, char **argv) {
+	// setup
+	cmdSetup();
+
+	// cmd command loop
+	cmdLoop();
+
+	// end ncu
+	ncu.end();
+			
 	return 0;
+}
+
+void cmdSetup() {
+	// start ncu
+	ncu.start();
+	ncu.hideCursor();
+
+	// setup windows
+	ncu.addElement("navbar", NCU_BORDER_BOX, ncu.width(), 3, 0, 0);
+	ncu.addElement("escmenu", NCU_BORDER_BOX, ncu.width()/2, ncu.height()/2,
+										   ncu.width()/2-(ncu.width()/4),
+										   ncu.height()/2-(ncu.height()/4));
+	ncu.addElement("casualbase", NCU_BORDERLESS_BOX, ncu.width(), ncu.height()-6, 0, 3);
+	ncu.addElement("casual", NCU_BORDER_BOX, ncu.width()/2, ncu.height()/2, 0, 3);
+
+	// decorate
+	ncu.addTitle("escmenu", "ESC Menu (ugly and temporary)");
+	ncu.write("escmenu", "'c' - Casual Mode", 2, 2);
+	ncu.write("escmenu", "'q' - quit", 2, 3);
+}
+
+void cmdLoop() {
+
+	escMenu();
+}
+
+void escMenu() {
+	bool q = false;
+
+	// push
+	push(ESC);
+
+	while (1) {
+		switch (getch()) {
+			case 'q':
+				q = true;
+			case 'c':
+				pop();
+				break;
+			case 27:
+				push(ESC);
+		}
+		if (q) break;
+	}
+
+	// pop
+	pop();
 }
 
 
 
+void push(Mode m) {
+	modeStack.push_back(m);
+	switch (m) {
+		case ESC:
+			ncu.showElement("escmenu");
+	}
+}
 
+void pop() {
+	if (modeStack.size() > 0) {
+		switch(modeStack[modeStack.size()-1]) {
+			case ESC:
+				ncu.hideElement("escmenu");
+		}
 
-
-
-
+		modeStack.pop_back();
+		
+	}
+}
 
 
 

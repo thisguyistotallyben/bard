@@ -292,6 +292,17 @@ void NCU::showElement(string id) {
     doupdate();
 }
 
+// hideElement
+// hides an element
+void NCU::hideElement(string id) {
+    PANEL *p = getPanel(id);
+    if (p != NULL) hide_panel(p);
+
+    // update
+    update_panels();
+    doupdate();
+}
+
 // wait
 // just a while loop waiting for a key
 // i'm not completely sure y tho

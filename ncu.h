@@ -74,6 +74,7 @@ class NCU {
         void borderElement(string id, borderType bt);
         void addTitle(string id, string title);
         void showElement(string id);
+		void hideElement(string id);
         void clearElement(string id);
         void updateElement(string id);
 
