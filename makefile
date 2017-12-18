@@ -1,16 +1,13 @@
 all: bard
 
-bard: bard.o bard_utils.o ncurses_utils.o
-	g++ -o bard bard.o bard_utils.o ncurses_utils.o -lpanel -lncurses
+bard: bard.o ncu.o
+	g++ -o bard bard.o ncu.o -lncurses -lpanel
 
-bard.o: bard_utils.h ncurses_utils.h bard.cpp
-	g++ -c bard.cpp -lpanel -lncurses
+bard.o: bard.cpp ncu.h
+	g++ -c bard.cpp -lncurses -lpanel
 
-bard_utils.o: bard_utils.h bard_utils.cpp
-	g++ -c bard_utils.cpp
-
-ncurses_utils.o: ncurses_utils.h ncurses_utils.cpp
-	g++ -c ncurses_utils.cpp -lpanel -lncurses
+ncu.o: ncu.cpp ncu.h
+	g++ -c ncu.cpp -lncurses -lpanel
 
 clean:
-	rm bard.o bard_utils.o ncurses_utils.o bard
+	rm -rf bard *.o

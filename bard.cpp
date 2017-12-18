@@ -7,6 +7,25 @@
 #include <sstream>
 #include <cstring>
 #include "bard_utils.h"
+#include "ncu.h"
+
+int main() {
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
 #include "ncurses_utils.h"
 using namespace std;
 
@@ -390,3 +409,4 @@ void printInfo(Person *p) {
 	ss << p->contact.size() << " previous contacts";
 	ncu.printWin(cw, cl++, 2, ss.str());
 }
+#endif
