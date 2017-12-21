@@ -6,6 +6,8 @@
 
 **Tuesday, August 8, 2017:** BARD uses only an ncurses-driven command line interface.  For now.
 
-Install:
+
+
+### Install:
 
 You need a c++ compiler, make, ncurses, and probably Linux.  Type 'make' to run the makefile.
