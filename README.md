@@ -1,5 +1,4 @@
-# BARD
-Ben's Amateur Radio Database
+# BARD - Ben's Amateur Radio Database
 
 
 
