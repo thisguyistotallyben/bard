@@ -13,20 +13,34 @@
 // globals
 enum Mode {ESC, CASUAL, SEARCH};
 
+class CasualData {
+	public:
+		string call;
+		string name;
+		string location;
+		int signalSent;
+		int signalRecv;
+		int frequency;
+};
+
 vector<Mode> modeStack;
 bool CMD;
 NCU ncu;
 Mode currMode, prevMode;
 
+CasualData cd;
+
 // prototypes
 void cmdSetup();
 void cmdLoop();
+void cmdCasual();
 void push(Mode m);
 void pop();
 
 // mode prototypes
 void escMenu();
 
+// MAIN -------------------------------------------------------------------------------------------
 
 int main(int argc, char **argv) {
 	// setup
@@ -41,6 +55,8 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
+// SETUP ------------------------------------------------------------------------------------------
+
 void cmdSetup() {
 	// start ncu
 	ncu.start();
@@ -51,8 +67,9 @@ void cmdSetup() {
 	ncu.addElement("escmenu", NCU_BORDER_BOX, ncu.width()/2, ncu.height()/2,
 										   ncu.width()/2-(ncu.width()/4),
 										   ncu.height()/2-(ncu.height()/4));
+
 	ncu.addElement("casualbase", NCU_BORDERLESS_BOX, ncu.width(), ncu.height()-6, 0, 3);
-	ncu.addElement("casual", NCU_BORDER_BOX, ncu.width()/2, ncu.height()/2, 0, 3);
+	ncu.addElement("casual", NCU_BORDER_BOX, ncu.width()/2, 3, 0, 3);
 
 	// decorate
 	ncu.addTitle("escmenu", "ESC Menu (ugly and temporary)");
@@ -60,13 +77,20 @@ void cmdSetup() {
 	ncu.write("escmenu", "'q' - quit", 2, 3);
 }
 
+// LOOP -------------------------------------------------------------------------------------------
+
 void cmdLoop() {
 
 	escMenu();
 }
 
+// ESC --------------------------------------------------------------------------------------------
+
 void escMenu() {
 	bool q = false;
+	
+	// display visuals
+	ncu.showElement("escmenu");
 
 	// push
 	push(ESC);
@@ -75,8 +99,9 @@ void escMenu() {
 		switch (getch()) {
 			case 'q':
 				q = true;
+				break;
 			case 'c':
-				pop();
+				cmdCasual();
 				break;
 			case 27:
 				push(ESC);
@@ -85,34 +110,47 @@ void escMenu() {
 	}
 
 	// pop
+	ncu.hideElement("escmenu");
 	pop();
 }
 
+// CASUAL -----------------------------------------------------------------------------------------
 
+void cmdCasual() {
+	char c;
+	
+	// setup
+	push(CASUAL);
+	ncu.showElement("casualbase");
+	ncu.showElement("casual");
+	ncu.showElement("navbar");
+
+	ncu.wait(27); 
+
+	// probably should use my nonexistent forms here
+
+	// hide visuals
+	ncu.hideElement("casualbase");
+	ncu.hideElement("casual");
+	ncu.hideElement("navbar");
+	pop();
+}
+
+// PUSH/POP ---------------------------------------------------------------------------------------
 
 void push(Mode m) {
 	modeStack.push_back(m);
-	switch (m) {
-		case ESC:
-			ncu.showElement("escmenu");
-	}
 }
 
 void pop() {
 	if (modeStack.size() > 0) {
-		switch(modeStack[modeStack.size()-1]) {
-			case ESC:
-				ncu.hideElement("escmenu");
-		}
-
 		modeStack.pop_back();
-		
 	}
 }
 
 
 
-
+// PROBABLY GARBAGE -------------------------------------------------------------------------------
 
 #if 0
 #include "ncurses_utils.h"
