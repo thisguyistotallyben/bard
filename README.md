@@ -1,6 +1,6 @@
 # BARD - Ben's Amateur Radio Database
 
-### Current State:
+## Current State:
 
 **Thursday, December 21, 2017:** 'master' is currently dead. Head over to the 'dev' branch to check out current development
 
