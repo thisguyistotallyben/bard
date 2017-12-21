@@ -3,7 +3,7 @@ Ben's Amateur Radio Database
 
 
 
-### Current State:
+## Current State:
 
 **Thursday, December 21, 2017:** BARD is slowly being brought back to its original state using the new NCU
 
@@ -15,6 +15,8 @@ Ben's Amateur Radio Database
 
 BARD is being redeveloped to hopefully be less hastly written and to also use my improved NCursesUtils library.
 
-Install:
+
+
+### Install:
 
 You need a c++11 compiler, make, ncurses, and probably Linux.  Type 'make' to run the makefile.
