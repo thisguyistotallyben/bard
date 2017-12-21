@@ -3,13 +3,17 @@ Ben's Amateur Radio Database
 
 
 
-Current State:
+### Current State:
 
-As of Tuesday, August 8, 2017, BARD uses only an ncurses-driven command line interface.  For now.
+**Thursday, December 21, 2017:** BARD is slowly being brought back to its original state using the new NCU
+
+**Tuesday, August 8, 2017:** BARD uses only an ncurses-driven command line interface.  For now.
+
+
 
 ## DEV BRANCH
 
-BARD is being redeveloped to hopefully be less hastly written and is also using my improved NCurses Utils library.
+BARD is being redeveloped to hopefully be less hastly written and to also use my improved NCursesUtils library.
 
 Install:
 
